@@ -5,6 +5,8 @@ defmodule EnumExtras do
 
   @type t :: Enumerable.t()
 
+  @type element :: any
+
   @doc """
   Calculates the average of the elements in the `enumerable`.
 
@@ -43,5 +45,35 @@ defmodule EnumExtras do
 
         total / sum
     end
+  end
+
+  @doc """
+  Partitions the elements of the `enumerable` according to the pairwise comparator.
+
+  ## Examples
+
+      iex> EnumExtras.chunk_by_pairwise([1, 2, 3, 4, 1, 2, 3, 1, 2, 1], fn a, b -> a <= b end)
+      [[1, 2, 3, 4], [1, 2, 3], [1, 2], [1]]
+  """
+  @spec chunk_by_pairwise(t, (element, element -> boolean)) :: t
+  def chunk_by_pairwise([], _comparator), do: []
+  def chunk_by_pairwise([value], _comparator), do: [[value]]
+
+  def chunk_by_pairwise(values, comparator) do
+    values
+    |> Enum.reverse()
+    |> Enum.chunk_every(2, 1)
+    |> Enum.reduce([[]], fn
+      [value], [head | tail] ->
+        [[value | head] | tail]
+
+      [left_value, right_value], [head | tail] ->
+        acc = [[left_value | head] | tail]
+        # The arguments in the comparator are reversed because the given list is reversed above.
+        case comparator.(right_value, left_value) do
+          true -> acc
+          false -> [[]] ++ acc
+        end
+    end)
   end
 end
