@@ -11,13 +11,12 @@ defmodule EnumExtras do
   Calculates the average of the elements in the `enumerable`.
 
   It should return `nil` if the `enumerable` is empty.
-
-  FIXME: Susceptible to floating-point errors.
   """
   @spec average(t) :: nil | integer
   def average([]), do: nil
 
   def average(list) when is_list(list) do
+    # FIXME: Susceptible to floating-point errors.
     Enum.sum(list) / Enum.count(list)
   end
 
@@ -25,20 +24,18 @@ defmodule EnumExtras do
   Calculates the weighted average of the elements in the `enumerable`.
 
   It should return `nil` if the `enumerable` is empty or the weights sum to zero.
-
-  FIXME: Susceptible to floating-point errors.
-
-  TODO: Handle case when number of weights differs from number of elements in list.
   """
   @spec weighted_average(t, t) :: nil | integer
   def weighted_average([], _weights), do: nil
 
   def weighted_average(list, weights) when is_list(list) and is_list(weights) do
+    # TODO: Handle case when number of weights differs from number of elements in list.
     case Enum.sum(weights) do
       0 ->
         nil
 
       sum ->
+        # FIXME: Susceptible to floating-point errors.
         total =
           Enum.zip(list, weights)
           |> Enum.reduce(0, fn {element, weight}, acc -> acc + element * weight end)
